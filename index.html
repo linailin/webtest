@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载速度测试</title>
+    <style>
+        /* Base styles for body and container */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            background-color: #f3f4f6; /* Equivalent to Tailwind's bg-gray-100 */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Adjust alignment to allow content to flow */
+            min-height: 100vh;
+            padding: 1rem; /* Equivalent to Tailwind's p-4 */
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1rem; /* Equivalent to Tailwind's rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Equivalent to Tailwind's shadow-xl */
+            padding: 2.5rem; /* Equivalent to Tailwind's p-10 */
+            width: 100%;
+            max-width: 960px; /* Equivalent to Tailwind's max-w-4xl */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem; /* Equivalent to Tailwind's space-y-8 */
+        }
+
+        /* Heading styles */
+        h1 {
+            font-size: 2.25rem; /* Equivalent to Tailwind's text-4xl */
+            font-weight: 700; /* Equivalent to Tailwind's font-bold */
+            text-align: center;
+            color: #1e293b; /* Equivalent to Tailwind's text-slate-800 */
+            margin-bottom: 1.5rem; /* Equivalent to Tailwind's mb-6 */
+        }
+
+        /* Grid layout for inputs */
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Equivalent to Tailwind's grid-cols-1 */
+            gap: 1.5rem; /* Equivalent to Tailwind's gap-6 */
+            margin-bottom: 2rem; /* Equivalent to Tailwind's mb-8 */
+        }
+        @media (min-width: 768px) { /* Equivalent to Tailwind's md breakpoint */
+            .input-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)); /* Adjusted to 2 columns as duration is removed */
+            }
+        }
+
+        /* Input group styles */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .input-group label {
+            font-weight: 600; /* Equivalent to Tailwind's font-semibold */
+            color: #334155; /* Equivalent to Tailwind's text-slate-700 */
+        }
+        .input-group input[type="text"],
+        .input-group input[type="number"] {
+            padding: 0.75rem 1rem; /* Equivalent to Tailwind's px-4 py-3 */
+            border: 1px solid #cbd5e1; /* Equivalent to Tailwind's border-slate-300 */
+            border-radius: 0.5rem; /* Equivalent to Tailwind's rounded-lg */
+            font-size: 1rem; /* Equivalent to Tailwind's text-base */
+            color: #1e293b; /* Equivalent to Tailwind's text-slate-800 */
+            width: 100%; /* Equivalent to Tailwind's w-full */
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .input-group input[type="text"]:focus,
+        .input-group input[type="number"]:focus {
+            outline: none;
+            border-color: #6366f1; /* Equivalent to Tailwind's indigo-500 */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Equivalent to Tailwind's ring-2 ring-indigo-500/20 */
+        }
+
+        /* Button styles */
+        .button-controls {
+            display: flex;
+            flex-direction: column; /* Equivalent to Tailwind's flex-col */
+            gap: 1rem; /* Equivalent to Tailwind's gap-4 */
+            justify-content: center;
+            margin-bottom: 2rem; /* Equivalent to Tailwind's mb-8 */
+        }
+        @media (min-width: 640px) { /* Equivalent to Tailwind's sm breakpoint */
+            .button-controls {
+                flex-direction: row; /* Equivalent to Tailwind's sm:flex-row */
+            }
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem; /* Equivalent to Tailwind's px-6 py-3 */
+            border-radius: 0.75rem; /* Equivalent to Tailwind's rounded-xl */
+            font-weight: 700; /* Equivalent to Tailwind's font-bold */
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* Equivalent to Tailwind's shadow */
+        }
+        .button-primary {
+            background-color: #4f46e5; /* Equivalent to Tailwind's indigo-600 */
+            color: #ffffff;
+        }
+        .button-primary:hover:enabled {
+            background-color: #4338ca; /* Equivalent to Tailwind's indigo-700 */
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -2px rgba(99, 102, 241, 0.3);
+        }
+        .button-primary:active:enabled {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+        .button-danger {
+            background-color: #ef4444; /* Equivalent to Tailwind's red-500 */
+            color: #ffffff;
+        }
+        .button-danger:hover:enabled {
+            background-color: #dc2626; /* Equivalent to Tailwind's red-600 */
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -2px rgba(239, 68, 68, 0.3);
+        }
+        .button-danger:active:enabled {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+        .button:disabled {
+            background-color: #cbd5e1; /* Equivalent to Tailwind's slate-300 */
+            color: #64748b; /* Equivalent to Tailwind's slate-500 */
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Speed display styles */
+        .speed-display-container {
+            text-align: center;
+            margin-bottom: 2rem; /* Equivalent to Tailwind's mb-8 */
+        }
+        .speed-display-label {
+            font-size: 1.5rem; /* Equivalent to Tailwind's text-2xl */
+            font-weight: 600; /* Equivalent to Tailwind's font-semibold */
+            color: #334155; /* Equivalent to Tailwind's text-slate-700 */
+        }
+        .speed-value {
+            font-size: 3rem; /* Equivalent to Tailwind's text-5xl */
+            font-weight: 800; /* Equivalent to Tailwind's font-extrabold */
+            color: #4f46e5; /* Equivalent to Tailwind's text-indigo-600 */
+            margin-top: 0.5rem; /* Equivalent to Tailwind's mt-2 */
+            transition: all 0.3s ease-out; /* Added for smooth number transitions */
+        }
+
+        /* Message box styles */
+        .message-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        .message-box.warning {
+            background-color: #fef3c7; /* Equivalent to Tailwind's yellow-100 */
+            border: 1px solid #facc15; /* Equivalent to Tailwind's yellow-400 */
+            color: #a16207; /* Equivalent to Tailwind's yellow-700 */
+        }
+        .message-box.error {
+            background-color: #fee2e2; /* Equivalent to Tailwind's red-100 */
+            border: 1px solid #f87171; /* Equivalent to Tailwind's red-400 */
+            color: #b91c1c; /* Equivalent to Tailwind's red-700 */
+        }
+        .message-box.info {
+            background-color: #dbeafe; /* Equivalent to Tailwind's blue-100 */
+            border: 1px solid #60a5fa; /* Equivalent to Tailwind's blue-400 */
+            color: #1d4ed8; /* Equivalent to Tailwind's blue-700 */
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>下载速度测试</h1>
+
+        <!-- 测试配置区 -->
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="sourceUrl">下载源 URL:</label>
+                <input type="text" id="sourceUrl" value="https://uu.gdl.netease.com/5098/UU-5.55.1.exe" placeholder="例如: https://example.com/large_file.zip">
+            </div>
+            <div class="input-group">
+                <label for="threads">并发线程数:</label>
+                <input type="number" id="threads" value="4" min="1" max="16">
+            </div>
+            <!-- 测试时长已移除，默认不间断 -->
+        </div>
+
+        <!-- 控制按钮 -->
+        <div class="button-controls">
+            <button id="startButton" class="button button-primary">
+                <span id="startText">开始测试</span>
+            </button>
+            <button id="stopButton" class="button button-danger" disabled>停止测试</button>
+        </div>
+
+        <!-- 实时速度显示 -->
+        <div class="speed-display-container">
+            <p class="speed-display-label">当前速度:</p>
+            <p id="speedDisplay" class="speed-value">0.00 MB/s</p>
+        </div>
+
+        <!-- 消息框 -->
+        <div id="messageBox" class="message-box hidden"></div>
+    </div>
+
+    <script>
+        // 获取 DOM 元素
+        const sourceUrlInput = document.getElementById('sourceUrl');
+        const threadsInput = document.getElementById('threads');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const messageBox = document.getElementById('messageBox');
+        const startText = document.getElementById('startText');
+
+        // 测试状态变量
+        let isTesting = false;
+        let downloadStartTime = 0;
+        let downloadedBytes = 0;
+        let downloadControllers = []; // AbortController 数组，用于停止下载
+        let speedUpdateIntervalId = null; // 用于速度更新的 setInterval
+
+        /**
+         * 显示消息框
+         * @param {string} message 要显示的消息
+         * @param {string} type 消息类型 (e.g., 'warning', 'info', 'error')
+         */
+        function showMessageBox(message, type = 'warning') {
+            messageBox.textContent = message;
+            messageBox.className = `message-box ${type}`; // Apply type as a class
+            messageBox.classList.remove('hidden');
+        }
+
+        /**
+         * 隐藏消息框
+         */
+        function hideMessageBox() {
+            messageBox.classList.add('hidden');
+        }
+
+        /**
+         * 执行单个下载线程
+         * @param {string} url 下载源 URL
+         * @param {AbortController} controller 用于中止下载的 AbortController 实例
+         */
+        async function startDownloadThread(url, controller) {
+            try {
+                const response = await fetch(url, {
+                    signal: controller.signal,
+                    cache: 'no-store' // 禁用缓存，确保每次都从服务器下载
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP 错误! 状态: ${response.status}`);
+                }
+
+                const reader = response.body.getReader();
+                while (true) {
+                    if (!isTesting) { // 如果测试已停止，取消读取
+                        reader.cancel();
+                        break;
+                    }
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        break;
+                    }
+                    downloadedBytes += value.length;
+                    // Yield control to the event loop to prevent freezing
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    console.log('下载线程已中止。');
+                } else {
+                    console.error('下载线程错误:', error);
+                    if (isTesting) { // 只有在测试进行中才显示错误
+                        showMessageBox(`下载失败: ${error.message}. 请检查 URL 或网络连接。`, 'error');
+                        stopTest(); // 遇到错误时停止测试
+                    }
+                }
+            }
+        }
+
+        /**
+         * 开始下载速度测试
+         */
+        async function startTest() {
+            if (isTesting) return;
+
+            hideMessageBox(); // 隐藏之前的消息
+
+            const sourceUrl = sourceUrlInput.value.trim();
+            const threads = parseInt(threadsInput.value, 10);
+
+            if (!sourceUrl) {
+                showMessageBox('请输入下载源 URL。');
+                return;
+            }
+            if (isNaN(threads) || threads < 1 || threads > 16) {
+                showMessageBox('并发线程数必须是 1 到 16 之间的数字。');
+                return;
+            }
+
+            // 重置状态
+            isTesting = true;
+            downloadedBytes = 0;
+            downloadControllers = [];
+            downloadStartTime = Date.now();
+
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            startText.textContent = '测试中...';
+            speedDisplay.textContent = '0.00 MB/s'; // 重置显示
+
+            // 启动并发下载线程
+            for (let i = 0; i < threads; i++) {
+                const controller = new AbortController();
+                downloadControllers.push(controller);
+                startDownloadThread(sourceUrl, controller);
+            }
+
+            // 启动速度更新间隔
+            speedUpdateIntervalId = setInterval(() => {
+                const currentTime = Date.now();
+                const elapsedSeconds = (currentTime - downloadStartTime) / 1000;
+
+                if (elapsedSeconds > 0) {
+                    // 1 MB = 1,000,000 bytes
+                    const currentSpeedMBps = downloadedBytes / (elapsedSeconds * 1000 * 1000);
+                    speedDisplay.textContent = `${currentSpeedMBps.toFixed(2)} MB/s`;
+                }
+            }, 500); // 每 500 毫秒更新一次速度显示
+        }
+
+        /**
+         * 停止下载速度测试
+         */
+        function stopTest() {
+            if (!isTesting) return;
+
+            isTesting = false;
+            clearInterval(speedUpdateIntervalId); // 停止速度更新
+
+            // 中止所有正在进行的下载
+            downloadControllers.forEach(controller => controller.abort());
+            downloadControllers = []; // 清空控制器数组
+
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            startText.textContent = '开始测试';
+
+            // 最终速度计算
+            const finalTime = Date.now();
+            const elapsedSeconds = (finalTime - downloadStartTime) / 1000;
+            if (elapsedSeconds > 0) {
+                const finalSpeedMBps = downloadedBytes / (elapsedSeconds * 1000 * 1000);
+                speedDisplay.textContent = `${finalSpeedMBps.toFixed(2)} MB/s`;
+            } else {
+                speedDisplay.textContent = '0.00 MB/s';
+            }
+        }
+
+        // 事件监听器
+        startButton.addEventListener('click', startTest);
+        stopButton.addEventListener('click', stopTest);
+
+        // 页面加载时显示提示
+        window.onload = () => {
+            showMessageBox('提示: 请使用支持 CORS 的下载源 URL，否则下载可能失败。', 'info');
+        };
+    </script>
+</body>
+</html>
